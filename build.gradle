@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
+    id 'io.qameta.allure' version '2.9.3'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    allureVersion = '2.29.0'
+}
+
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+[compileKotlin, compileTestKotlin].forEach {
+    it.kotlinOptions {
+        jvmTarget = '21'
+    }
+}
+
+//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+//    kotlinOptions {
+//        jvmTarget = '21'
+//    }
+//}
+
+dependencies {
+    // Pour permettre aux tests d'utiliser les classes de src/main/
+    testImplementation('com.codeborne:selenide-testng:7.6.0')
+    testImplementation("io.qameta.allure:allure-selenide:${allureVersion}")
+    testImplementation('org.aspectj:aspectjweaver:1.9.21') // 🔄 Mise à jour @todo d'AspectJ a voir plus tard
+
+    testImplementation('org.slf4j:slf4j-simple:2.0.16')
+
+    testImplementation('org.testng:testng:7.10.2')
+
+    // Pour tester les API REST avec RestAssured
+    testImplementation("io.rest-assured:rest-assured:5.3.2") // @todo a voir plus tard
+
+    // Pour gérer les objets JSON plus facilement
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0") // @todo a voir plus tard
+
+}
+
+test {
+    useTestNG()
+}
+allure {
+    version = "${allureVersion}"
+
+    useTestNG {
+        version = "${allureVersion}"
+    }
+}
